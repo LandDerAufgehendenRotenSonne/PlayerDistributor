@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,6 +23,8 @@ public class PlayerDistributor {
 
     public static final String OUTPUT_DIR = "output";
     public static final String OUTPUT_NAME = "output";
+
+    public static boolean CHECK_MINECRAFT_NAMES = false;
 
     public static void main(String[] args) {
 
@@ -73,7 +76,13 @@ public class PlayerDistributor {
 
         // find ExcelFile
         File excelFile = null;
+        System.out.println(Arrays.toString(args));
         for (String arg: args) {
+            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("checkMinecraftNames")) {
+                CHECK_MINECRAFT_NAMES = true;
+                continue;
+            }
+
             String[] parts = arg.split("=", 2);
             if(parts.length != 2) continue;
             String key = parts[0].trim();
@@ -81,7 +90,6 @@ public class PlayerDistributor {
 
             if(key.equalsIgnoreCase("inputFile")) {
                 excelFile = ExcelFileUtil.findFromPath(value);
-                break;
             }
         }
 

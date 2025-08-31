@@ -35,6 +35,7 @@ public class FactionPreAssigner {
 
                 for(String f: pd.friends) {
                     PlayerData friend = byName.get(f.toLowerCase());
+                    if(friend == null) continue;
                     if(friend.faction.isEmpty()) {
                         friend.faction = pd.faction;
                         filtered.remove(friend);

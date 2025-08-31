@@ -1,8 +1,10 @@
 package karnickeldev.playerdistributor.parsing;
 
 import karnickeldev.playerdistributor.config.ConfigManager;
+import karnickeldev.playerdistributor.core.PlayerDistributor;
 import karnickeldev.playerdistributor.distribution.PlayerData;
 import karnickeldev.playerdistributor.util.LoggingUtil;
+import karnickeldev.playerdistributor.util.MinecraftUsernameValidator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +88,8 @@ public class InputValidator {
 
     @SuppressWarnings("unused")
     private static boolean checkUsername(String name) {
-        return true;
+        if(!PlayerDistributor.CHECK_MINECRAFT_NAMES) return true;
+        return MinecraftUsernameValidator.checkUsername(name);
     }
 
 }

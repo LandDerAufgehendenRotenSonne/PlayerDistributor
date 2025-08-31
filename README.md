@@ -28,7 +28,14 @@ Reads the player-list from an Excel File and distributes all players across fact
 | end-row           | what row to stop processing                                       |
 
 ### How it works
-Players with an empty faction cell are distributed evenly across all factions
+Players with no faction are distributed evenly across all factions
 while keeping friends in the same faction. Players with a preassigned faction are
 kept in that faction, and all their friends with no faction are forced into the same faction.
-THe result is written to a copy of the original Excel file in the output directory
+The result is written to a copy of the original Excel file in the output directory
+
+### How to run the .jar
+Open a Terminal in the same Directory as the .jar File and enter: 
+**java -jar FILE_NAME.jar**
+
+You can also add the following flags, separated by spaces, at the end of the above line:
+- --checkMinecraftName *Checks if the Name belongs to a valid Minecraft Account*
