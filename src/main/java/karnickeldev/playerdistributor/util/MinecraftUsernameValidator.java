@@ -1,6 +1,5 @@
 package karnickeldev.playerdistributor.util;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -10,8 +9,7 @@ import java.net.URL;
  **/
 public class MinecraftUsernameValidator {
 
-    private static final String MOJANG_API =
-            "https://api.mojang.com/users/profiles/minecraft/";
+    private static final String MOJANG_API = "https://api.mojang.com/users/profiles/minecraft/";
 
     private static final int TIMEOUT_MS = 50;
     private static long lastCheck = 0;

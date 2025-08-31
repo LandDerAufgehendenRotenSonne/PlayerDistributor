@@ -72,6 +72,11 @@ public class PlayerDistributor {
                 LoggingUtil.error("Could not create output directory");
                 return;
             }
+        } else {
+            if(!outputPath.toFile().isDirectory()) {
+                LoggingUtil.error("Output directory can't be a File");
+                System.exit(1);
+            }
         }
 
         // find ExcelFile
@@ -110,6 +115,12 @@ public class PlayerDistributor {
         }
 
         Path outputFile = ConfigManager.getJarDirectory().resolve(OUTPUT_DIR + "/" + OUTPUT_NAME + ".xlsx");
+
+        if(Files.exists(outputFile)) {
+            LoggingUtil.error("Delete " + OUTPUT_NAME + ".xlsx in output directory and run again");
+            System.exit(1);
+        }
+
         try {
             inputExcel.save(outputFile);
         } catch (IOException e) {

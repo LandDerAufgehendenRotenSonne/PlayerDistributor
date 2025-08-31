@@ -6,7 +6,7 @@
 
     <groupId>karnickeldev.playerdistributor</groupId>
     <artifactId>PlayerDistributor</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2</version>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
