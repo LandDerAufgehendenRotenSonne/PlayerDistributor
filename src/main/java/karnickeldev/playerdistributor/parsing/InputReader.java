@@ -1,13 +1,12 @@
-package karnickeldev.playerdistributor.distribution;
+package karnickeldev.playerdistributor.parsing;
 
 import karnickeldev.playerdistributor.config.ConfigManager;
+import karnickeldev.playerdistributor.distribution.PlayerData;
 import karnickeldev.playerdistributor.excel.ExcelHelper;
 import karnickeldev.playerdistributor.util.LoggingUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author : KarnickelDev
@@ -20,9 +19,8 @@ public class InputReader {
      * Ignores empty rows or Players that are already assigned a Faction
      * @return A List of Players with no Faction
      */
-    public static PlayerList loadPlayerData(ExcelHelper excelInput, ConfigManager configManager) {
-        List<PlayerData> unfactioned = new ArrayList<>();
-        List<PlayerData> factioned = new ArrayList<>();
+    public static List<PlayerData> loadPlayerData(ExcelHelper excelInput, ConfigManager configManager) {
+        List<PlayerData> playerList = new ArrayList<>(512);
 
         String sheetName = configManager.getSheetName();
         int name_col = configManager.getMCNameCol();
@@ -36,11 +34,11 @@ public class InputReader {
 
         Sheet sheet = excelInput.getSheet(sheetName);
         if(sheet == null) {
-            System.out.println("Sheet " + sheetName + " not found");
+            LoggingUtil.warn("Sheet " + sheetName + " not found");
             System.exit(0);
         }
 
-        List<String> visited = new ArrayList<>();
+        Map<String, Integer> visited = new HashMap<>();
 
         int emptyRows = 0;
 
@@ -51,57 +49,48 @@ public class InputReader {
                 continue;
             }
 
-            if(visited.contains(name)) {
-                System.out.println("WARNING: double entry \"" + name + "\" found");
+            if(visited.containsKey(name.toLowerCase())) {
+                LoggingUtil.warn("skipping double entry \"" + name + "\" found in rows " + y + ", " + visited.get(name.toLowerCase()));
                 continue;
             }
-            visited.add(name);
+            visited.put(name.toLowerCase(), y);
 
             String faction = excelInput.readCell(sheet, y, faction_col);
-            boolean hasFaction = false;
 
-            // skip players with entry
-            if(faction != null && !faction.isEmpty()) {
-                if(!configManager.getFactions().contains(faction)) {
-                    System.out.println("WARNING: invalid faction found");
-                    continue;
-                }
-                hasFaction = true;
+            if(faction == null) {
+                faction = "";
+            }
+
+            // handle faction
+            if(!faction.isEmpty() && !configManager.getFactions().contains(faction)) {
+                LoggingUtil.warn("Invalid faction found for player " + name + " in row " + y);
+                continue;
             }
 
             String role = excelInput.readCell(sheet, y, role_col);
-            if(role == null || role.isEmpty()) {
-                System.out.println("skipping row without any role");
-                continue;
-            }
-            if(!configManager.getRoles().contains(role)) {
-                System.out.println("skipping row with invalid role");
-                continue;
+            if(role == null) {
+                role = "";
             }
 
             List<String> friends = new ArrayList<>();
             for(int x = friend_col; x <= friend_col + max_friends; x++) {
                 String friend = excelInput.readCell(sheet, y, x);
-                if(friend != null && !friend.isEmpty() && !configManager.getFriendBlacklist().contains(friend)) {
+                if(friend != null && !friend.isEmpty()) {
                     friends.add(friend);
                 }
             }
 
-            if(hasFaction) {
-                PlayerData pd = new PlayerData(y, name, role, Collections.emptyList());
-                pd.faction = faction;
-                factioned.add(pd);
-            } else {
-                unfactioned.add(new PlayerData(y, name, role, friends));
-            }
+            PlayerData pd = new PlayerData(y, name, role, faction, friends);
+
+            playerList.add(pd);
 
             if(y % 10 == 0) {
                 LoggingUtil.printProgressBar("Parsing Input", (byte)20, (y-start) / (float) (end - start));
             }
 
         }
-        System.out.println("skipped " + emptyRows + " empty rows");
-        return new PlayerList(factioned, unfactioned);
+        LoggingUtil.info("skipped " + emptyRows + " empty rows");
+        return playerList;
     }
 
 }

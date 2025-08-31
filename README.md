@@ -1,5 +1,5 @@
 # PlayerDistributor
-Reads the playerlist from an excel File and distributes all players across factions
+Reads the player-list from an Excel File and distributes all players across factions
 
 ---
 
@@ -8,25 +8,27 @@ Reads the playerlist from an excel File and distributes all players across facti
 - Place into empty Directory
 - copy Excel File into Directory
 - run from Terminal
-- (optional) edit config.properties, then clear output and run again
+- (optional) edit config.properties
+- take note of all errors or warnings
 - finished list is in output directory
 
 ### Config
-| **Property** | **value**                                    |
-|--------------|----------------------------------------------|
-| sheet-name   | name of the excel sheet to be processed      |
-| mc-name-col  | index of the column with the minecraft name  |
-| role-col     | index of the column with the players role    |
-| roles | comma-seperates list of possible roles       |
-| faction-col | index of the column with the players faction |
-| factions | comma-seperates list of possible factions    |
-| friends-col | index of the column where the friends list starts |
-| max-friends | how many columns to check for friends to the right of friends-col |
-| friends-blacklist | names than are blacklisted from being friends |
-| start-row | what row to start processing |
-| end-row | what row to stop processing |
+| **Property**      | **value**                                                         |
+|-------------------|-------------------------------------------------------------------|
+| sheet-name        | name of the excel sheet to be processed                           |
+| mc-name-col       | index of the column with the minecraft name                       |
+| role-col          | index of the column with the players role                         |
+| roles             | comma-separates list of possible roles                            |
+| faction-col       | index of the column with the players faction                      |
+| factions          | comma-separates list of possible factions                         |
+| friends-col       | index of the column where the friends list starts                 |
+| max-friends       | how many columns to check for friends to the right of friends-col |
+| friends-blacklist | names than are blacklisted from being friends                     |
+| start-row         | what row to start processing                                      |
+| end-row           | what row to stop processing                                       |
 
 ### How it works
 Players with an empty faction cell are distributed evenly across all factions
-while keeping friends in the same faction. The result is written to a copy of the
-original excel file in the output directory
+while keeping friends in the same faction. Players with a preassigned faction are
+kept in that faction, and all their friends with no faction are forced into the same faction.
+THe result is written to a copy of the original Excel file in the output directory

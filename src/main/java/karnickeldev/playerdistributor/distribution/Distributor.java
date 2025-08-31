@@ -1,6 +1,7 @@
 package karnickeldev.playerdistributor.distribution;
 
 import karnickeldev.playerdistributor.config.ConfigManager;
+import karnickeldev.playerdistributor.util.LoggingUtil;
 
 import java.util.*;
 
@@ -22,7 +23,7 @@ public class Distributor {
     }
 
 
-    public static DistributionResult distribute(ConfigManager configManager, List<PlayerGroup> groups, PlayerList playerList) {
+    public static DistributionResult distribute(ConfigManager configManager, List<PlayerGroup> groups, List<PlayerData> validPlayerList) {
         List<Faction> factions = new LinkedList<>();
         Map<String, Faction> factionByName = new HashMap<>();
         List<PlayerData> finalPlayerList = new ArrayList<>();
@@ -31,26 +32,36 @@ public class Distributor {
             Faction f = new Faction(faction, configManager.getRoles());
             factions.add(f);
             factionByName.put(faction, f);
-            System.out.println("created faction " + faction);
+            LoggingUtil.info("created faction " + faction);
         }
 
         // distribute factioned players first
-        for(PlayerData pd: playerList.getFactionedPlayers()) {
-            if(pd.faction.isEmpty()) throw new IllegalStateException("Factioned Player with no Faction");
+        for(PlayerData pd: validPlayerList) {
+            if(pd.faction.isEmpty()) continue;
             factionByName.get(pd.faction).addPlayer(pd);
             finalPlayerList.add(pd);
         }
 
 
         // distribute unfactioned players
-        for (int i = 0; i < groups.size(); i++) {
-            PlayerGroup group = groups.get(i);
+        for (PlayerGroup group : groups) {
+            if (!groupHasNoFaction(group.getMembers())) {
+                throw new IllegalStateException("Groups should not contain members with a Faction");
+            }
+
             Faction targetFaction = getSmallestFaction(factions);
             targetFaction.addGroup(group);
             finalPlayerList.addAll(group.getMembers());
         }
 
         return new DistributionResult(factions, finalPlayerList);
+    }
+
+    private static boolean groupHasNoFaction(List<PlayerData> players) {
+        for(PlayerData pd: players) {
+            if(!pd.faction.isEmpty()) return false;
+        }
+        return true;
     }
 
     private static Faction getSmallestFaction(List<Faction> factions) {

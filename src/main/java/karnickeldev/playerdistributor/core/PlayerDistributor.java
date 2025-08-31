@@ -4,12 +4,14 @@ import karnickeldev.playerdistributor.config.ConfigManager;
 import karnickeldev.playerdistributor.distribution.*;
 import karnickeldev.playerdistributor.excel.ExcelFileUtil;
 import karnickeldev.playerdistributor.excel.ExcelHelper;
+import karnickeldev.playerdistributor.parsing.InputReader;
+import karnickeldev.playerdistributor.parsing.InputValidator;
+import karnickeldev.playerdistributor.util.LoggingUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,26 +20,43 @@ import java.util.List;
  **/
 public class PlayerDistributor {
 
-    public static final String PREFIX = "[PlayerDistributor]";
     public static final String OUTPUT_DIR = "output";
     public static final String OUTPUT_NAME = "output";
 
     public static void main(String[] args) {
 
+        // init logger
+        try {
+            LoggingUtil.init();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         ConfigManager configManager = new ConfigManager(
                 ConfigManager.getJarDirectory().resolve("config.properties")
         );
 
+        if(!Files.exists(configManager.getConfigFile())) {
+            LoggingUtil.info("No config found, generating default...");
+
+            try {
+                configManager.createDefault();
+                LoggingUtil.info("Generated default config. Edit it and run again");
+                return;
+            } catch (Exception e) {
+                LoggingUtil.error("Error generating default config");
+                throw new RuntimeException(e);
+            }
+        }
+
         // load config
-        try {
-            configManager.init();
-        } catch (IOException e) {
-            System.err.println("Error loading config");
-            throw new RuntimeException(e);
+        if(!configManager.load()) {
+            LoggingUtil.error("Error loading config");
+            return;
         }
 
         if(!configManager.isValid()) {
-            System.out.println("Config invalid");
+            LoggingUtil.error("Config invalid");
             return;
         }
 
@@ -47,7 +66,7 @@ public class PlayerDistributor {
             try {
                 Files.createDirectory(outputPath);
             } catch (IOException e) {
-                System.out.println("Could not create output directory");
+                LoggingUtil.error("Could not create output directory");
                 return;
             }
         }
@@ -71,14 +90,14 @@ public class PlayerDistributor {
 
         // no file, exit
         if(excelFile == null) {
-            System.out.println("No valid Excel-File found");
+            LoggingUtil.error("No valid Excel-File found");
             return;
         }
 
         // create ExcelHelpers
         ExcelHelper inputExcel = ExcelHelper.loadFile(excelFile, true);
         if(inputExcel == null) {
-            System.out.println("something went wrong with loading the files");
+            LoggingUtil.error("something went wrong with loading the files");
             return;
         }
 
@@ -92,15 +111,32 @@ public class PlayerDistributor {
         ExcelHelper outputExcel = ExcelHelper.loadFile(outputFile.toFile(), false);
 
         // process files
-        PlayerList playerList = InputReader.loadPlayerData(outputExcel, configManager);
-        System.out.println("Parsed " + playerList.getUnfactionedPlayers().size() + " players without a faction");
+        List<PlayerData> rawPlayerList = InputReader.loadPlayerData(outputExcel, configManager);
+        LoggingUtil.info("Parsed " + rawPlayerList.size() + " players");
 
-        List<PlayerGroup> groups = GroupBuilder.buildGroups(playerList.getUnfactionedPlayers());
-        if(groups.isEmpty()) System.out.println("No groups found");
-        System.out.println("Found " + groups.size() + " groups (largest: " + (groups.isEmpty() ? 0 : groups.get(0).size()) + ")");
+        // validate input
+        List<PlayerData> validPlayerList = InputValidator.validateInput(configManager, rawPlayerList);
+        LoggingUtil.info("Validated " + validPlayerList.size() + " players");
 
-        Distributor.DistributionResult distributionResult = Distributor.distribute(configManager, groups, playerList);
-        System.out.println(distributionResult.factions);
+        // preassign factions
+        // includes friends of preassigned players
+        List<PlayerData> playersWithoutFaction = FactionPreAssigner.filterAndPreAssignFactions(validPlayerList);
+
+        // group players
+        List<PlayerGroup> groups = GroupBuilder.buildGroups(playersWithoutFaction);
+        if(groups.isEmpty()) LoggingUtil.info("No groups found");
+        LoggingUtil.info("Found " + groups.size() + " groups (largest: " + (groups.isEmpty() ? 0 : groups.get(0).size()) + ")");
+
+        // distribute players
+        Distributor.DistributionResult distributionResult = Distributor.distribute(configManager, groups, validPlayerList);
+        LoggingUtil.info(distributionResult.factions.toString());
+
+        LoggingUtil.info("TOTAL WARNINGS: " + LoggingUtil.getWarnings());
+        if(LoggingUtil.getWarnings() > 0) {
+            LoggingUtil.info("");
+            LoggingUtil.info("FIX WARNINGS AND RUN AGAIN");
+            LoggingUtil.info("");
+        }
 
         // write distribution
         String sheet = configManager.getSheetName();
@@ -111,6 +147,13 @@ public class PlayerDistributor {
         try {
             outputExcel.save();
             outputExcel.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        try {
+            LoggingUtil.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

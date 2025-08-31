@@ -44,8 +44,8 @@ public class ConfigManager {
         this.configFile = configFile;
     }
 
-    public Properties getProperties() {
-        return properties;
+    public Path getConfigFile() {
+        return configFile;
     }
 
     public static Path getJarDirectory() {
@@ -66,28 +66,34 @@ public class ConfigManager {
         }
     }
 
-    public void init() throws IOException {
+    public void createDefault() throws IOException {
+        properties.setProperty(SHEET_NAME_PROP, "PlayerData");
+        properties.setProperty(MC_NAME_COL_PROP, "0");
+        properties.setProperty(ROLE_COL_PROP, "3");
+        properties.setProperty(ROLES_PROP, "PVP, Builder, Roleplay");
+        properties.setProperty(FACTION_COL_PROP, "4");
+        properties.setProperty(FACTIONS_PROP, "Jungle, Desert, Plains");
+        properties.setProperty(FRIENDS_COL_PROP, "5");
+        properties.setProperty(MAX_FRIENDS_PROP, "4");
+        properties.setProperty(FRIENDS_BLACKLIST_PROP, "");
+        properties.setProperty(START_ROW, "1");
+        properties.setProperty(END_ROW, "100");
+
+        save();
+    }
+
+    public boolean load() {
         if(Files.exists(configFile)) {
             try(InputStream is = Files.newInputStream(configFile)) {
                 properties.load(is);
+            } catch (IOException e) {
+                System.err.println("Error loading config");
+                throw new RuntimeException(e);
             }
-        } else {
-            properties.setProperty(SHEET_NAME_PROP, "PlayerData");
-            properties.setProperty(MC_NAME_COL_PROP, "0");
-            properties.setProperty(ROLE_COL_PROP, "3");
-            properties.setProperty(ROLES_PROP, "PVP, Builder, Roleplay");
-            properties.setProperty(FACTION_COL_PROP, "4");
-            properties.setProperty(FACTIONS_PROP, "Jungle, Desert, Plains");
-            properties.setProperty(FRIENDS_COL_PROP, "5");
-            properties.setProperty(MAX_FRIENDS_PROP, "4");
-            properties.setProperty(FRIENDS_BLACKLIST_PROP, "");
-            properties.setProperty(START_ROW, "1");
-            properties.setProperty(END_ROW, "100");
-
-            save();
+            System.out.println("Configuration loaded");
+            return true;
         }
-
-        System.out.println("Configuration loaded");
+        return false;
     }
 
     public boolean isValid() {
@@ -172,7 +178,7 @@ public class ConfigManager {
     public List<String> getFriendBlacklist() {
         String factionString = properties.getProperty(FRIENDS_BLACKLIST_PROP);
         if(factionString == null || factionString.isEmpty()) return Collections.emptyList();
-        return Arrays.stream(factionString.split(",")).map(String::trim).toList();
+        return Arrays.stream(factionString.split(",")).map(String::trim).map(String::toLowerCase).toList();
     }
 
 }

@@ -27,7 +27,7 @@ public class GroupBuilder {
             if (parent[p] != p) {
                 // traverse to root, also change all parent pointers to root for faster lookup
                 // this conceptually "flattens" the tree to a depth of 1
-                /**
+                /*
                  *      p     |      p
                  *    /  \    | / / | | \ \
                  *   o    o   | o o o o o o

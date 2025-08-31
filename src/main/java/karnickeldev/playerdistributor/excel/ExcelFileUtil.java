@@ -60,7 +60,7 @@ public class ExcelFileUtil {
 
             // Try old Excel format (.xls)
             try {
-                POIFSFileSystem poifs = new POIFSFileSystem(fis);
+                new POIFSFileSystem(fis);
                 return true;
             } catch (Exception ignored) {}
 

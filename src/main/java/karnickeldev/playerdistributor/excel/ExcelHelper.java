@@ -1,13 +1,11 @@
 package karnickeldev.playerdistributor.excel;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -34,32 +32,6 @@ public class ExcelHelper {
         return new ExcelHelper(file.toPath(), workbook, readOnly);
     }
 
-    public static ExcelHelper createNew(Path path, String fileName) {
-        if(new File(path.toFile(), fileName).exists()) {
-            System.out.println("output file " + fileName + " already exists");
-            System.exit(0);
-        }
-
-        Path excelFile = path.resolve(fileName);
-
-        try {
-            if (Files.notExists(path)) {
-                Files.createDirectories(path);
-            }
-
-            if (Files.exists(excelFile)) {
-                Files.delete(excelFile);
-            }
-
-            Files.createFile(excelFile);
-        } catch (Exception e) {
-            System.out.println("Error creating output, try again");
-            throw new RuntimeException(e);
-        }
-
-        return new ExcelHelper(excelFile, new XSSFWorkbook(), false);
-    }
-
     private final Path path;
     private final Workbook workbook;
     private final boolean readOnly;
@@ -67,18 +39,6 @@ public class ExcelHelper {
         this.path = path;
         this.workbook = workbook;
         this.readOnly = readOnly;
-    }
-
-    public Path getPath() {
-        return path;
-    }
-
-    public Workbook getWorkbook() {
-        return workbook;
-    }
-
-    public boolean isReadOnly() {
-        return readOnly;
     }
 
     /**
@@ -106,7 +66,7 @@ public class ExcelHelper {
             case STRING, FORMULA -> cell.getStringCellValue();
             case NUMERIC -> String.valueOf(cell.getNumericCellValue());
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
-            default -> null;
+            default -> "";
         };
     }
 
