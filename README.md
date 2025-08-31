@@ -39,3 +39,4 @@ Open a Terminal in the same Directory as the .jar File and enter:
 
 You can also add the following flags, separated by spaces, at the end of the above line:
 - --checkMinecraftName *Checks if the Name belongs to a valid Minecraft Account*
+- --removeUncheckedEntries *Remove Entries where either Twitch or Discord is not checked from the File*

@@ -25,6 +25,7 @@ public class PlayerDistributor {
     public static final String OUTPUT_NAME = "output";
 
     public static boolean CHECK_MINECRAFT_NAMES = false;
+    public static boolean REMOVE_UNCHECKED_ENTRIES = false;
 
     public static void main(String[] args) {
 
@@ -85,6 +86,12 @@ public class PlayerDistributor {
         for (String arg: args) {
             if(arg.trim().replaceAll("-", "").equalsIgnoreCase("checkMinecraftNames")) {
                 CHECK_MINECRAFT_NAMES = true;
+                continue;
+            }
+
+            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("removeUncheckedEntries")) {
+                CHECK_MINECRAFT_NAMES = false;
+                REMOVE_UNCHECKED_ENTRIES = true;
                 continue;
             }
 

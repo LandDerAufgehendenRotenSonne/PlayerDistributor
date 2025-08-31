@@ -27,6 +27,9 @@ public class ConfigManager {
     private final Properties properties = new Properties();
 
     private final String SHEET_NAME_PROP = "sheet-name";
+    private final String DISCORD_ID_COL_PROP = "discordId-col";
+    private final String TWITCH_CHECK_COL_PROP = "twitch-check-col";
+    private final String DISCORD_CHECK_COL_PROP = "discord-check-col";
     private final String MC_NAME_COL_PROP = "mc-name-col";
     private final String ROLE_COL_PROP = "role-col";
     private final String ROLES_PROP = "roles";
@@ -68,13 +71,16 @@ public class ConfigManager {
 
     public void createDefault() throws IOException {
         properties.setProperty(SHEET_NAME_PROP, "PlayerData");
-        properties.setProperty(MC_NAME_COL_PROP, "0");
-        properties.setProperty(ROLE_COL_PROP, "3");
-        properties.setProperty(ROLES_PROP, "PVP, Builder, Roleplay");
-        properties.setProperty(FACTION_COL_PROP, "4");
+        properties.setProperty(DISCORD_ID_COL_PROP, "0");
+        properties.setProperty(MC_NAME_COL_PROP, "1");
+        properties.setProperty(TWITCH_CHECK_COL_PROP, "2");
+        properties.setProperty(DISCORD_CHECK_COL_PROP, "3");
+        properties.setProperty(ROLE_COL_PROP, "4");
+        properties.setProperty(FACTION_COL_PROP, "5");
+        properties.setProperty(FRIENDS_COL_PROP, "6");
+        properties.setProperty(MAX_FRIENDS_PROP, "5");
         properties.setProperty(FACTIONS_PROP, "Jungle, Desert, Plains");
-        properties.setProperty(FRIENDS_COL_PROP, "5");
-        properties.setProperty(MAX_FRIENDS_PROP, "4");
+        properties.setProperty(ROLES_PROP, "PVP, Builder, Roleplay");
         properties.setProperty(FRIENDS_BLACKLIST_PROP, "");
         properties.setProperty(START_ROW, "1");
         properties.setProperty(END_ROW, "100");
@@ -107,9 +113,33 @@ public class ConfigManager {
         return properties.getProperty(SHEET_NAME_PROP);
     }
 
+    public int getDiscordIdCol() {
+        try {
+            return Integer.parseInt(properties.getProperty(DISCORD_ID_COL_PROP));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     public int getMCNameCol() {
         try {
             return Integer.parseInt(properties.getProperty(MC_NAME_COL_PROP));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int getTwitchCheckedCol() {
+        try {
+            return Integer.parseInt(properties.getProperty(TWITCH_CHECK_COL_PROP));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int getDiscordCheckedCol() {
+        try {
+            return Integer.parseInt(properties.getProperty(DISCORD_CHECK_COL_PROP));
         } catch (Exception e) {
             return 0;
         }

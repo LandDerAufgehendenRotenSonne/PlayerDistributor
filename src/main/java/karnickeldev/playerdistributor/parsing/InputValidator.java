@@ -37,14 +37,14 @@ public class InputValidator {
 
             // validate username
             if(!checkUsername(name)) {
-                LoggingUtil.warn("Player " + pd.name + " in row " + pd.row + " has invalid minecraft username");
+                LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid minecraft username");
                 validByName.put(name, false);
                 continue;
             }
 
             // validate role
             if(pd.role.isEmpty() || !configManager.getRoles().contains(pd.role)) {
-                LoggingUtil.warn("Player " + pd.name + " in row " + pd.row + " has invalid role " + pd.role);
+                LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid role " + pd.role);
                 validByName.put(name, false);
                 continue;
             }
@@ -54,21 +54,21 @@ public class InputValidator {
             for(String friend: pd.friends) {
                 String key = friend.toLowerCase();
                 if(!playerDataByName.containsKey(key)) {
-                    LoggingUtil.warn("Player " + pd.name + "'s friend " + friend + " not found");
+                    LoggingUtil.warn("Player @" + pd.discordId + "'s friend " + friend + " not found");
                     toRemove.add(friend);
                     continue;
                 }
 
                 // check friend valid
                 if(!validByName.get(key)) {
-                    LoggingUtil.warn("Removed Player " + pd.name + "'s friend " + friend + " because he was invalid");
+                    LoggingUtil.warn("Removed Player @" + pd.discordId + "'s friend " + friend + " because he was invalid");
                     toRemove.add(friend);
                     continue;
                 }
 
                 // check friend not on blacklist
                 if(configManager.getFriendBlacklist().contains(key)) {
-                    LoggingUtil.info("Ignoring " + pd.name + "'s Friend " + friend + " because of blacklist");
+                    LoggingUtil.info("Ignoring @" + pd.discordId + "'s Friend " + friend + " because of blacklist");
                     blacklistHits.put(friend.toLowerCase(), blacklistHits.getOrDefault(friend.toLowerCase(), 0) + 1);
                     toRemove.add(friend);
                 }

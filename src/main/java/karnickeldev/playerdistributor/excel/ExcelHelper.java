@@ -92,6 +92,18 @@ public class ExcelHelper {
         cell.setCellValue(value);
     }
 
+    public void removeRow(Sheet sheet, int rowIndex) {
+        int lastRowNum = sheet.getLastRowNum();
+        if (rowIndex >= 0 && rowIndex < lastRowNum) {
+            sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
+        } else if (rowIndex == lastRowNum) {
+            Row removingRow = sheet.getRow(rowIndex);
+            if (removingRow != null) {
+                sheet.removeRow(removingRow);
+            }
+        }
+    }
+
     /**
      * Save the Excel file to disk.
      */
