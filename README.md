@@ -39,11 +39,11 @@ Open a Terminal in the same Directory as the .jar File and enter:
 
 You can also add the following flags, separated by spaces, at the end of the above line:
 
-  | Flag                       | Description                                                                          | Notes / Default                              |
-  | -------------------------- |--------------------------------------------------------------------------------------|----------------------------------------------|
-  | `--checkMinecraftName`     | Checks if the Name belongs to a valid Minecraft account                              | Optional                                     |
-  | `--removeUncheckedEntries` | Removes entries where either Twitch or Discord is not checked from the output file   | Optional                                     |
-  | `--requireMutual`          | Friendships only count if mutual (i.e., A has B as a friend and B has A as a friend) | Optional                                     |
-  | `--inputFile=PATH`         | Specifies the input Excel file to use                                                | Default: first excel file found in directory |
-  | `--groupLimit=LIMIT`       | Sets the maximum size of friendship groups                                           | Default: 32                                  |
+  | Flag                   | Description                                                                          | Notes / Default                              |
+  |------------------------|--------------------------------------------------------------------------------------|----------------------------------------------|
+  | `--checkMinecraftName` | Checks if the Name belongs to a valid Minecraft account                              | Optional                                     |
+  | `--delUnchecked`       | Deletes entries where either Twitch or Discord is not checked from the output file   | Optional                                     |
+  | `--requireMutual`      | Friendships only count if mutual (i.e., A has B as a friend and B has A as a friend) | Optional                                     |
+  | `--inputFile=PATH`     | Specifies the input Excel file to use                                                | Default: first excel file found in directory |
+  | `--groupLimit=LIMIT`   | Sets the maximum size of friendship groups                                           | Default: 32                                  |
 

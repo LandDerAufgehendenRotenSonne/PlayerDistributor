@@ -91,7 +91,7 @@ public class PlayerDistributor {
                 continue;
             }
 
-            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("removeUncheckedEntries")) {
+            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("delUnchecked")) {
                 CHECK_MINECRAFT_NAMES = false;
                 REMOVE_UNCHECKED_ENTRIES = true;
                 continue;
