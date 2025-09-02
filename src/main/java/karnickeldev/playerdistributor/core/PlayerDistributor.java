@@ -86,7 +86,7 @@ public class PlayerDistributor {
         File excelFile = null;
         System.out.println(Arrays.toString(args));
         for (String arg: args) {
-            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("checkMinecraftNames")) {
+            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("checkMCNames")) {
                 CHECK_MINECRAFT_NAMES = true;
                 continue;
             }
