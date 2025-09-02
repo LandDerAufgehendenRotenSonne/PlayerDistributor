@@ -38,5 +38,12 @@ Open a Terminal in the same Directory as the .jar File and enter:
 **java -jar FILE_NAME.jar**
 
 You can also add the following flags, separated by spaces, at the end of the above line:
-- --checkMinecraftName *Checks if the Name belongs to a valid Minecraft Account*
-- --removeUncheckedEntries *Remove Entries where either Twitch or Discord is not checked from the File*
+
+  | Flag                       | Description                                                                          | Notes / Default                              |
+  | -------------------------- |--------------------------------------------------------------------------------------|----------------------------------------------|
+  | `--checkMinecraftName`     | Checks if the Name belongs to a valid Minecraft account                              | Optional                                     |
+  | `--removeUncheckedEntries` | Removes entries where either Twitch or Discord is not checked from the output file   | Optional                                     |
+  | `--requireMutual`          | Friendships only count if mutual (i.e., A has B as a friend and B has A as a friend) | Optional                                     |
+  | `--inputFile=PATH`         | Specifies the input Excel file to use                                                | Default: first excel file found in directory |
+  | `--groupLimit=LIMIT`       | Sets the maximum size of friendship groups                                           | Default: 32                                  |
+

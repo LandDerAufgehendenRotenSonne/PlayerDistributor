@@ -26,6 +26,8 @@ public class PlayerDistributor {
 
     public static boolean CHECK_MINECRAFT_NAMES = false;
     public static boolean REMOVE_UNCHECKED_ENTRIES = false;
+    public static int GROUP_LIMIT = 32;
+    public static GroupBuilder.LinkMode LINK_MODE = GroupBuilder.LinkMode.ANY_LINK;
 
     public static void main(String[] args) {
 
@@ -95,14 +97,26 @@ public class PlayerDistributor {
                 continue;
             }
 
+            if(arg.trim().replaceAll("-", "").equalsIgnoreCase("requireMutual")) {
+                LINK_MODE = GroupBuilder.LinkMode.MUTUAL;
+                continue;
+            }
+
             String[] parts = arg.split("=", 2);
             if(parts.length != 2) continue;
-            String key = parts[0].trim();
+            String key = parts[0].trim().replaceAll("-", "");
             String value = parts[1].trim();
 
             if(key.equalsIgnoreCase("inputFile")) {
                 excelFile = ExcelFileUtil.findFromPath(value);
             }
+
+            if(key.equalsIgnoreCase("groupLimit")) {
+                try {
+                    GROUP_LIMIT = Integer.parseInt(value);
+                } catch (Exception ignored) {}
+            }
+
         }
 
         // fallback to first Excel file found
@@ -152,6 +166,8 @@ public class PlayerDistributor {
         List<PlayerGroup> groups = GroupBuilder.buildGroups(playersWithoutFaction);
         if(groups.isEmpty()) LoggingUtil.info("No groups found");
         LoggingUtil.info("Found " + groups.size() + " groups (largest: " + (groups.isEmpty() ? 0 : groups.get(0).size()) + ")");
+
+        System.out.println(groups);
 
         // distribute players
         Distributor.DistributionResult distributionResult = Distributor.distribute(configManager, groups, validPlayerList);

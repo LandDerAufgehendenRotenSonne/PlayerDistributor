@@ -49,7 +49,7 @@ public class Distributor {
                 throw new IllegalStateException("Groups should not contain members with a Faction");
             }
 
-            Faction targetFaction = getSmallestFaction(factions);
+            Faction targetFaction = chooseBestFaction(factions, group);
             targetFaction.addGroup(group);
             finalPlayerList.addAll(group.getMembers());
         }
@@ -64,14 +64,38 @@ public class Distributor {
         return true;
     }
 
-    private static Faction getSmallestFaction(List<Faction> factions) {
-        Faction r = factions.get(0);
-        for(Faction f: factions) {
-            if(f.playerCount() < r.playerCount()) {
-                r = f;
+    private static Faction chooseBestFaction(List<Faction> factions, PlayerGroup group) {
+        Faction best = null;
+        double bestScore = Double.NEGATIVE_INFINITY;
+
+        for (Faction f : factions) {
+            // base: prefer smaller factions
+            double score = (averageFactionSize(factions) - f.playerCount());
+
+            // role balance: boost score if this faction lacks this role
+            Map<String, Integer> roleCount = f.getRoleCount();
+            for (PlayerData pd : group.getMembers()) {
+                long count = roleCount.getOrDefault(pd.role, 0);
+                double avg = averageRoleCount(factions, pd.role);
+                score += (avg - count) * 0.8; // weight role balancing slightly less than size
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                best = f;
             }
         }
-        return r;
+        return best;
+    }
+
+    private static double averageFactionSize(List<Faction> factions) {
+        return factions.stream().mapToInt(Faction::playerCount).average().orElse(0);
+    }
+
+    private static double averageRoleCount(List<Faction> factions, String role) {
+        return factions.stream()
+                .mapToInt(f -> f.getRoleCount().getOrDefault(role, 0))
+                .average().orElse(0);
     }
 
 }

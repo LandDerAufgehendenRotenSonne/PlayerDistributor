@@ -1,5 +1,6 @@
 package karnickeldev.playerdistributor.distribution;
 
+import karnickeldev.playerdistributor.core.PlayerDistributor;
 import karnickeldev.playerdistributor.util.LoggingUtil;
 
 import java.util.*;
@@ -10,16 +11,24 @@ import java.util.*;
  **/
 public class GroupBuilder {
 
+    public enum LinkMode {
+        ANY_LINK,
+        MUTUAL
+    }
+
     private static class DSU {
         private final int[] parent;
         private final byte[] depth;
+        private final int[] groupSize;
 
         private DSU(int initialSize) {
             parent = new int[initialSize];
             depth = new byte[initialSize];
+            groupSize = new int[initialSize];
             for (int i = 0; i < initialSize; i++) {
                 parent[i] = i;
                 depth[i] = 0;
+                groupSize[i] = 1;
             }
         }
 
@@ -46,14 +55,22 @@ public class GroupBuilder {
             // already in a union
             if (rootA == rootB) return;
 
+            // optional: max group size check
+            int sizeA = groupSize[rootA];
+            int sizeB = groupSize[rootB];
+            if(sizeA + sizeB > PlayerDistributor.GROUP_LIMIT) return; // skip merge
+
             // attach smaller tree under bigger tree
             if (depth[rootA] < depth[rootB]) {
                 parent[rootA] = rootB;
+                groupSize[rootB] += sizeA;
             } else if (depth[rootA] > depth[rootB]) {
                 parent[rootB] = rootA;
+                groupSize[rootA] += sizeB;
             } else {
                 parent[rootB] = rootA;
                 depth[rootA]++;
+                groupSize[rootA] += sizeB;
             }
         }
     }
@@ -75,7 +92,15 @@ public class GroupBuilder {
                 if (j == null) continue;    // ignore unknown names
                 if (j == i) continue;       // ignore self
 
-                dsu.union(i, j);
+                // Decide whether to union based on mode
+                if (PlayerDistributor.LINK_MODE == LinkMode.MUTUAL) {
+                    PlayerData b = playerData.get(j);
+                    if (b.friends.contains(a.name)) {  // mutual check
+                        dsu.union(i, j);
+                    }
+                } else {
+                    dsu.union(i, j);
+                }
             }
             if(i % 10 == 0) {
                 LoggingUtil.printProgressBar("unionizing", (byte)20, i / (float) playerData.size());

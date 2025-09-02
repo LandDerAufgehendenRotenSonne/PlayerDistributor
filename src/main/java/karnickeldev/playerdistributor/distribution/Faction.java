@@ -34,24 +34,14 @@ public class Faction {
         }
     }
 
-    public void removeGroup(PlayerGroup group) {
-        groups.remove(group);
-        for(PlayerData player: group.getMembers()) removePlayer(player);
-    }
-
     public void addPlayer(PlayerData playerData) {
         playerData.faction = name;  //TODO: bad
         players.add(playerData);
         roleCount.put(playerData.role, roleCount.getOrDefault(playerData.role, 0) + 1);
     }
 
-    public void removePlayer(PlayerData playerData) {
-        players.remove(playerData);
-        roleCount.put(playerData.role, roleCount.getOrDefault(playerData.role, 1) - 1);
-    }
-
-    public int groupCount() {
-        return groups.size();
+    public Map<String, Integer> getRoleCount() {
+        return roleCount;
     }
 
     public int playerCount() {

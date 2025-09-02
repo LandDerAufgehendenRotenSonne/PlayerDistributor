@@ -36,9 +36,9 @@ public class PlayerGroup {
         return members.size();
     }
 
-    public int count(String role) {
-        if(role == null) return 0;
-        return roleCounts.getOrDefault(role, 0);
+    @Override
+    public String toString() {
+        return "{size=" + size() + "}";
     }
 
 }
