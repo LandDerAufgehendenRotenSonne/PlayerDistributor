@@ -65,7 +65,7 @@ public class InputReader {
             // check mc name
             String name = excelInput.readCell(sheet, y, name_col);
             if(name == null) {
-                name = "missing minecraft name";
+                name = InputValidator.MISSING_MC_NAME;
             } else {
                 if(mcVisited.containsKey(name.toLowerCase())) {
                     LoggingUtil.warn("skipping double mc-name \"" + name + "\" found in rows " + y + ", " +
@@ -87,7 +87,7 @@ public class InputReader {
             if(discordCheck == null || discordCheck.isEmpty()) {
                 LoggingUtil.warn("skipping @" + discordId + " in row " + y + " because discord isn't checked");
             }
-            boolean discord = parseBool(twitchCheck);
+            boolean discord = parseBool(discordCheck);
 
             // maybe remove row
             // skip if players background is not properly checked
@@ -126,7 +126,7 @@ public class InputReader {
                 }
             }
 
-            playerList.add(new PlayerData(y, discordId, name, twitch, discord, role, faction, friends));
+            playerList.add(new PlayerData(y, discordId, name, true, true, role, faction, friends));
 
             if(y % 10 == 0) {
                 LoggingUtil.printProgressBar("Parsing Input", (byte)20, (y-start) / (float) (end - start));
@@ -138,11 +138,10 @@ public class InputReader {
     }
 
     private static boolean parseBool(String bool) {
-        try {
-            return Boolean.parseBoolean(bool);
-        } catch (Exception e) {
-            return false;
-        }
+        if(bool == null || bool.isEmpty()) return false;
+        return bool.equalsIgnoreCase("true")
+                || bool.equalsIgnoreCase("checked")
+                || bool.equals("1");
     }
 
 }

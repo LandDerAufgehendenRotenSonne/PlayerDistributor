@@ -17,6 +17,7 @@ import java.util.Map;
  **/
 public class InputValidator {
 
+    public static final String MISSING_MC_NAME = "NAME MISSING";
 
     public static List<PlayerData> validateInput(ConfigManager configManager, List<PlayerData> playerData) {
         List<PlayerData> validatedPlayerlist = new ArrayList<>();
@@ -89,6 +90,7 @@ public class InputValidator {
     @SuppressWarnings("unused")
     private static boolean checkUsername(String name) {
         if(!PlayerDistributor.CHECK_MINECRAFT_NAMES) return true;
+        if(name.equals(MISSING_MC_NAME)) return true;
         return MinecraftUsernameValidator.checkUsername(name);
     }
 

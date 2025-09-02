@@ -185,6 +185,9 @@ public class PlayerDistributor {
         int faction_col = configManager.getFactionCol();
         for(PlayerData player: distributionResult.distributedPlayers) {
             outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, faction_col, player.faction);
+            if(player.name.equals(InputValidator.MISSING_MC_NAME)) {
+                outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getMCNameCol(), player.name);
+            }
         }
         try {
             outputExcel.save();
