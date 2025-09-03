@@ -56,11 +56,11 @@ public class InputReader {
                 continue;
             }
 
-            if(discordVisited.containsKey(discordId)) {
+            if(discordVisited.containsKey(discordId.toLowerCase())) {
                 LoggingUtil.warn("skipping double entry \"" + discordId + "\" found in rows " + y + ", " + discordVisited.get(discordId));
                 continue;
             }
-            discordVisited.put(discordId, y);
+            discordVisited.put(discordId.toLowerCase(), y);
 
             // check mc name
             String name = excelInput.readCell(sheet, y, name_col);

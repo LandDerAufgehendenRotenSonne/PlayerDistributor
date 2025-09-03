@@ -23,7 +23,7 @@ Reads the player-list from an Excel File and distributes all players across fact
 | factions          | comma-separates list of possible factions                         |
 | friends-col       | index of the column where the friends list starts                 |
 | max-friends       | how many columns to check for friends to the right of friends-col |
-| friends-blacklist | Discord Ids than are blacklisted from being friends               |
+| friends-blacklist | Discord Ids that are blacklisted from being friends               |
 | start-row         | what row to start processing                                      |
 | end-row           | what row to stop processing                                       |
 
@@ -32,6 +32,7 @@ The Program scans its directory and processes the first Excel file found
 (alternatively, a File-Path can be set using flags).  
 Players with no faction are distributed as evenly as possible across all factions
 while keeping friends in the same faction and balancing roles. 
+Friends are detected by Minecraft-Name or Discord-Id.
 Players with a preassigned faction are kept in that faction, and all their friends 
 with no faction are forced into the same faction.
 The result is written to a copy of the original Excel file in the output directory.
