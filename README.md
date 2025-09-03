@@ -23,7 +23,7 @@ Reads the player-list from an Excel File and distributes all players across fact
 | factions          | comma-separates list of possible factions                         |
 | friends-col       | index of the column where the friends list starts                 |
 | max-friends       | how many columns to check for friends to the right of friends-col |
-| friends-blacklist | names than are blacklisted from being friends                     |
+| friends-blacklist | Discord Ids than are blacklisted from being friends               |
 | start-row         | what row to start processing                                      |
 | end-row           | what row to stop processing                                       |
 

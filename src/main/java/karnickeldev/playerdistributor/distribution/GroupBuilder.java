@@ -79,23 +79,23 @@ public class GroupBuilder {
     public static List<PlayerGroup> buildGroups(List<PlayerData> playerData) {
         Map<String, Integer> idx = new HashMap<>(playerData.size());
         for(int i = 0; i < playerData.size(); i++) {
-            idx.put(playerData.get(i).name, i);
+            idx.put(playerData.get(i).name.toLowerCase(), i);
         }
 
         DSU dsu = new DSU(playerData.size());
 
         // normalize name matching & union according to mode
-        for (int i = 0; i < playerData.size(); i++) {
+        for(int i = 0; i < playerData.size(); i++) {
             PlayerData a = playerData.get(i);
-            for (String friendName : a.friends) {
-                Integer j = idx.get(friendName);
-                if (j == null) continue;    // ignore unknown names
-                if (j == i) continue;       // ignore self
+            for(String friendName : a.friends) {
+                Integer j = idx.get(friendName.toLowerCase());
+                if(j == null) continue;    // ignore unknown names
+                if(j == i) continue;       // ignore self
 
                 // Decide whether to union based on mode
-                if (PlayerDistributor.LINK_MODE == LinkMode.MUTUAL) {
+                if(PlayerDistributor.LINK_MODE == LinkMode.MUTUAL) {
                     PlayerData b = playerData.get(j);
-                    if (b.friends.contains(a.name)) {  // mutual check
+                    if(contains(b.friends, a.name) || contains(b.friends, a.discordId)) {  // mutual check
                         dsu.union(i, j);
                     }
                 } else {
@@ -118,6 +118,13 @@ public class GroupBuilder {
         List<PlayerGroup> groups = new ArrayList<>(byRoot.values());
         groups.sort(Comparator.comparingInt(PlayerGroup::size).reversed());
         return groups;
+    }
+
+    private static boolean contains(List<String> list, String value) {
+        for(String s: list) {
+            if(s.equalsIgnoreCase(value)) return true;
+        }
+        return false;
     }
 
 }

@@ -22,31 +22,33 @@ public class InputValidator {
     public static List<PlayerData> validateInput(ConfigManager configManager, List<PlayerData> playerData) {
         List<PlayerData> validatedPlayerlist = new ArrayList<>();
 
-        Map<String, PlayerData> playerDataByName = new HashMap<>(playerData.size());
-        Map<String, Boolean> validByName = new HashMap<>(playerData.size());
+        Map<String, String> discordByName = new HashMap<>(playerData.size());
+        Map<String, PlayerData> playerDataByDiscord = new HashMap<>();
+        Map<String, Boolean> validByDiscord = new HashMap<>(playerData.size());
 
         Map<String, Integer> blacklistHits = new HashMap<>();
 
         // build maps
         for(PlayerData pd: playerData) {
-            playerDataByName.put(pd.name.toLowerCase(), pd);
-            validByName.put(pd.name.toLowerCase(), true);
+            discordByName.put(pd.name.toLowerCase(), pd.discordId.toLowerCase());
+            playerDataByDiscord.put(pd.discordId.toLowerCase(), pd);
+            validByDiscord.put(pd.discordId.toLowerCase(), true);
         }
 
         for(PlayerData pd: playerData) {
-            String name = pd.name.toLowerCase();
+            String discord = pd.discordId.toLowerCase();
 
             // validate username
-            if(!checkUsername(name)) {
-                LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid minecraft username");
-                validByName.put(name, false);
+            if(pd.name != null && !pd.name.equals(MISSING_MC_NAME) && !checkUsername(pd.name)) {
+                LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid minecraft username " + pd.name);
+                validByDiscord.put(discord, false);
                 continue;
             }
 
             // validate role
             if(pd.role.isEmpty() || !configManager.getRoles().contains(pd.role)) {
                 LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid role " + pd.role);
-                validByName.put(name, false);
+                validByDiscord.put(discord, false);
                 continue;
             }
 
@@ -54,14 +56,19 @@ public class InputValidator {
             List<String> toRemove = new ArrayList<>();
             for(String friend: pd.friends) {
                 String key = friend.toLowerCase();
-                if(!playerDataByName.containsKey(key)) {
+                if(!playerDataByDiscord.containsKey(key)) {
+                    key = discordByName.get(key);
+                }
+
+                // check if player exists
+                if(key == null || !playerDataByDiscord.containsKey(key)) {
                     LoggingUtil.warn("Player @" + pd.discordId + "'s friend " + friend + " not found");
                     toRemove.add(friend);
                     continue;
                 }
 
                 // check friend valid
-                if(!validByName.get(key)) {
+                if(!validByDiscord.get(key)) {
                     LoggingUtil.warn("Removed Player @" + pd.discordId + "'s friend " + friend + " because he was invalid");
                     toRemove.add(friend);
                     continue;
