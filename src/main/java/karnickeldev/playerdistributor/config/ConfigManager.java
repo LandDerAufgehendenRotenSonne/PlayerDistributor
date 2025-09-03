@@ -1,14 +1,13 @@
 package karnickeldev.playerdistributor.config;
 
+import karnickeldev.playerdistributor.core.PlayerDistributor;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author : KarnickelDev
@@ -202,7 +201,9 @@ public class ConfigManager {
     public List<String> getRoles() {
         String factionString = properties.getProperty(ROLES_PROP);
         if(factionString == null || factionString.isEmpty()) return Collections.emptyList();
-        return Arrays.stream(factionString.split(",")).map(String::trim).toList();
+        List<String> ret = new ArrayList<>(Arrays.stream(factionString.split(",")).map(String::trim).map(String::toLowerCase).toList());
+        ret.add(PlayerDistributor.UNASSIGNED_ROLE);
+        return ret;
     }
 
     public List<String> getFriendBlacklist() {

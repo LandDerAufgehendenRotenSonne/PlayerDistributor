@@ -24,6 +24,8 @@ public class PlayerDistributor {
     public static final String OUTPUT_DIR = "output";
     public static final String OUTPUT_NAME = "output";
 
+    public static final String UNASSIGNED_ROLE = "OTHER";
+
     public static boolean CHECK_MINECRAFT_NAMES = false;
     public static boolean REMOVE_UNCHECKED_ENTRIES = false;
     public static int GROUP_LIMIT = 32;
@@ -158,6 +160,21 @@ public class PlayerDistributor {
         List<PlayerData> validPlayerList = InputValidator.validateInput(configManager, rawPlayerList);
         LoggingUtil.info("Validated " + validPlayerList.size() + " players");
 
+        if(REMOVE_UNCHECKED_ENTRIES) {
+            LoggingUtil.info("Deleted rows with players that didn't pass the background check or were double entries");
+            LoggingUtil.info("Run again without the --delUnchecked Flag to distribute players");
+            try {
+                outputExcel.save();
+                outputExcel.close();
+
+                LoggingUtil.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.exit(0);
+            return;
+        }
+
         // preassign factions
         // includes friends of preassigned players
         List<PlayerData> playersWithoutFaction = FactionPreAssigner.filterAndPreAssignFactions(validPlayerList);
@@ -188,16 +205,14 @@ public class PlayerDistributor {
             if(player.name.equals(InputValidator.MISSING_MC_NAME)) {
                 outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getMCNameCol(), player.name);
             }
+            if(player.role.equalsIgnoreCase(UNASSIGNED_ROLE)) {
+                outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getRoleCol(), player.role);
+            }
         }
         try {
             outputExcel.save();
             outputExcel.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-
-        try {
             LoggingUtil.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

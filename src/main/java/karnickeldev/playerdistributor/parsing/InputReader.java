@@ -23,6 +23,8 @@ public class InputReader {
     public static List<PlayerData> loadPlayerData(ExcelHelper excelInput, ConfigManager configManager) {
         List<PlayerData> playerList = new ArrayList<>(512);
 
+        List<Integer> rowsToDelete = new ArrayList<>();
+
         String sheetName = configManager.getSheetName();
         int discordId_col = configManager.getDiscordIdCol();
         int name_col = configManager.getMCNameCol();
@@ -53,6 +55,8 @@ public class InputReader {
             String discordId = excelInput.readCell(sheet, y, discordId_col);
             if(discordId == null || discordId.isEmpty()) {
                 emptyRows++;
+                rowsToDelete.add(y);
+                LoggingUtil.warn("Deleted row " + y + " with empty username");
                 continue;
             }
 
@@ -62,8 +66,9 @@ public class InputReader {
 
             if(discordVisited.containsKey(discordId.toLowerCase())) {
                 LoggingUtil.warn("skipping double entry \"" + discordId + "\" found in rows " + (y+1) + ", " + (discordVisited.get(discordId)+1));
-                excelInput.removeRow(sheet, y);
-                y--;
+                if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
+                    rowsToDelete.add(y);
+                }
                 continue;
             }
             discordVisited.put(discordId.toLowerCase(), y);
@@ -76,8 +81,9 @@ public class InputReader {
                 if(mcVisited.containsKey(name.toLowerCase())) {
                     LoggingUtil.warn("skipping double mc-name \"" + name + "\" found in rows " + (y+1) + ", " +
                             (mcVisited.get(name.toLowerCase())+1) + " of user @" + discordId);
-                    excelInput.removeRow(sheet, y);
-                    y--;
+                    if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
+                        rowsToDelete.add(y);
+                    }
                     continue;
                 }
                 mcVisited.put(name.toLowerCase(), y);
@@ -106,8 +112,7 @@ public class InputReader {
             if(!(discord && twitch)) {
                 if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
                     LoggingUtil.info("Deleted row " + (y+1) + " with player @" + discordId);
-                    excelInput.removeRow(sheet, y);
-                    y--;
+                    rowsToDelete.add(y);
                 }
                 continue;
             }
@@ -125,8 +130,10 @@ public class InputReader {
 
             // check role
             String role = excelInput.readCell(sheet, y, role_col);
-            if(role == null) {
-                role = "";
+            if(role == null || !configManager.getRoles().contains(role.toLowerCase())) {
+                role = PlayerDistributor.UNASSIGNED_ROLE;
+            } else {
+                role = role.toLowerCase();
             }
 
             // check friends
@@ -145,6 +152,14 @@ public class InputReader {
             }
 
         }
+
+        if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
+            int length = rowsToDelete.size();
+            for(int i = 0; i < length; i++) {
+                excelInput.removeRow(sheet, rowsToDelete.get(i) - i);
+            }
+        }
+
         LoggingUtil.info("skipped " + emptyRows + " empty rows");
         return playerList;
     }
