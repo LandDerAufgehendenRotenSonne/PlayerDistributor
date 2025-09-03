@@ -7,9 +7,9 @@ Reads the player-list from an Excel File and distributes all players across fact
 - Build or download .jar File
 - Place into empty Directory
 - copy Excel File into Directory
-- run from Terminal
+- run from a Terminal
 - (optional) edit config.properties
-- take note of all errors or warnings
+- take note of all errors or warnings (should be checked/fixed manually)
 - finished list is in output directory
 
 ## Config
@@ -37,6 +37,12 @@ Players with a preassigned faction are kept in that faction, and all their frien
 with no faction are forced into the same faction.
 The result is written to a copy of the original Excel file in the output directory.
 
+While processing, any potential problems are printed to the terminal and should be checked/fixed
+manually. At the end, an overview of the different groups and factions is printed. 
+If the largest groups size is equal to the groupLimit (default: 32), consider increasing
+the group limit or enforcing mutual friendships only to ensure players are grouped with their
+friends properly.
+
 ## How to run the .jar
 Open a Terminal in the same Directory as the .jar File and enter: 
 **java -jar FILE_NAME.jar**
@@ -51,3 +57,4 @@ You can also add the following optional flags, separated by spaces, at the end o
   | `--inputFile=PATH` | Specifies the input Excel file to use                         |
   | `--groupLimit=CAP` | Sets the maximum size of friendship groups (Default: 32)      |
 
+Example: java -jar PlayerDistributor-1.0.jar --checkMCNames --delUnchecked --groupLimit=50
