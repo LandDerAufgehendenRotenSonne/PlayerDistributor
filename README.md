@@ -12,6 +12,22 @@ Reads the player-list from an Excel File and distributes all players across fact
 - take note of all errors or warnings (should be checked/fixed manually)
 - finished list is in output directory
 
+## How it works
+The Program scans its directory and processes the first Excel file found
+(alternatively, a File-Path can be set using flags).  
+Players with no faction are distributed as evenly as possible across all factions
+while keeping friends in the same faction and balancing roles.
+Friends are detected by Minecraft-Name or Discord-Id.
+Players with a preassigned faction are kept in that faction, and all their friends
+with no faction are forced into the same faction.
+The result is written to a copy of the original Excel file in the output directory.
+
+While processing, any potential problems are printed to the terminal and should be checked/fixed
+manually. At the end, an overview of the different groups and factions is printed.
+If the largest groups size is equal to the groupLimit (default: 32), consider increasing
+the group limit or enforcing mutual friendships only to ensure players are grouped with their
+friends properly.
+
 ## Config
 | **Property**      | **value**                                                         |
 |-------------------|-------------------------------------------------------------------|
@@ -26,22 +42,6 @@ Reads the player-list from an Excel File and distributes all players across fact
 | friends-blacklist | Discord Ids that are blacklisted from being friends               |
 | start-row         | what row to start processing                                      |
 | end-row           | what row to stop processing                                       |
-
-## How it works
-The Program scans its directory and processes the first Excel file found
-(alternatively, a File-Path can be set using flags).  
-Players with no faction are distributed as evenly as possible across all factions
-while keeping friends in the same faction and balancing roles. 
-Friends are detected by Minecraft-Name or Discord-Id.
-Players with a preassigned faction are kept in that faction, and all their friends 
-with no faction are forced into the same faction.
-The result is written to a copy of the original Excel file in the output directory.
-
-While processing, any potential problems are printed to the terminal and should be checked/fixed
-manually. At the end, an overview of the different groups and factions is printed. 
-If the largest groups size is equal to the groupLimit (default: 32), consider increasing
-the group limit or enforcing mutual friendships only to ensure players are grouped with their
-friends properly.
 
 ## How to run the .jar
 Open a Terminal in the same Directory as the .jar File and enter: 
