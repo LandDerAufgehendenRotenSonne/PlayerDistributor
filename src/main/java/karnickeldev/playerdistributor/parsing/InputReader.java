@@ -56,8 +56,14 @@ public class InputReader {
                 continue;
             }
 
+            if(hasWhitespace(discordId)) {
+                LoggingUtil.warn("Suspicious DiscordId " + discordId + " in row " + (y+1));
+            }
+
             if(discordVisited.containsKey(discordId.toLowerCase())) {
-                LoggingUtil.warn("skipping double entry \"" + discordId + "\" found in rows " + y + ", " + discordVisited.get(discordId));
+                LoggingUtil.warn("skipping double entry \"" + discordId + "\" found in rows " + (y+1) + ", " + (discordVisited.get(discordId)+1));
+                excelInput.removeRow(sheet, y);
+                y--;
                 continue;
             }
             discordVisited.put(discordId.toLowerCase(), y);
@@ -68,24 +74,30 @@ public class InputReader {
                 name = InputValidator.MISSING_MC_NAME;
             } else {
                 if(mcVisited.containsKey(name.toLowerCase())) {
-                    LoggingUtil.warn("skipping double mc-name \"" + name + "\" found in rows " + y + ", " +
-                            mcVisited.get(name.toLowerCase()) + " of user @" + discordId);
+                    LoggingUtil.warn("skipping double mc-name \"" + name + "\" found in rows " + (y+1) + ", " +
+                            (mcVisited.get(name.toLowerCase())+1) + " of user @" + discordId);
+                    excelInput.removeRow(sheet, y);
+                    y--;
                     continue;
                 }
                 mcVisited.put(name.toLowerCase(), y);
             }
 
+            if(hasWhitespace(name) && !name.equals(InputValidator.MISSING_MC_NAME)) {
+                LoggingUtil.warn("Suspicious MinecraftName " + name + " in row " + (y+1));
+            }
+
             // check twitch
             String twitchCheck = excelInput.readCell(sheet, y, twitch_checked_col);
             if(twitchCheck == null || twitchCheck.isEmpty()) {
-                LoggingUtil.warn("skipping @" + discordId + " in row " + y + " because twitch isn't checked");
+                LoggingUtil.warn("skipping @" + discordId + " in row " + (y+1) + " because twitch isn't checked");
             }
             boolean twitch = parseBool(twitchCheck);
 
             // check discord
             String discordCheck = excelInput.readCell(sheet, y, discord_checked_col);
             if(discordCheck == null || discordCheck.isEmpty()) {
-                LoggingUtil.warn("skipping @" + discordId + " in row " + y + " because discord isn't checked");
+                LoggingUtil.warn("skipping @" + discordId + " in row " + (y+1) + " because discord isn't checked");
             }
             boolean discord = parseBool(discordCheck);
 
@@ -93,7 +105,7 @@ public class InputReader {
             // skip if players background is not properly checked
             if(!(discord && twitch)) {
                 if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
-                    LoggingUtil.info("Deleted row " + y + " with player @" + discordId);
+                    LoggingUtil.info("Deleted row " + (y+1) + " with player @" + discordId);
                     excelInput.removeRow(sheet, y);
                     y--;
                 }
@@ -107,7 +119,7 @@ public class InputReader {
 
             // handle faction
             if(!faction.isEmpty() && !configManager.getFactions().contains(faction)) {
-                LoggingUtil.warn("Invalid faction found for player @" + discordId + " in row " + y);
+                LoggingUtil.warn("Invalid faction found for player @" + discordId + " in row " + (y+1));
                 continue;
             }
 
@@ -135,6 +147,14 @@ public class InputReader {
         }
         LoggingUtil.info("skipped " + emptyRows + " empty rows");
         return playerList;
+    }
+
+    private static boolean hasWhitespace(String s) {
+        if(s == null || s.isEmpty()) return false;
+        for(char c: s.toCharArray()) {
+            if(Character.isWhitespace(c)) return true;
+        }
+        return false;
     }
 
     private static boolean parseBool(String bool) {

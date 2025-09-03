@@ -40,14 +40,14 @@ public class InputValidator {
 
             // validate username
             if(pd.name != null && !pd.name.equals(MISSING_MC_NAME) && !checkUsername(pd.name)) {
-                LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid minecraft username " + pd.name);
+                LoggingUtil.warn("Player @" + pd.discordId + " in row " + (pd.row+1) + " has invalid minecraft username " + pd.name);
                 validByDiscord.put(discord, false);
                 continue;
             }
 
             // validate role
             if(pd.role.isEmpty() || !configManager.getRoles().contains(pd.role)) {
-                LoggingUtil.warn("Player @" + pd.discordId + " in row " + pd.row + " has invalid role " + pd.role);
+                LoggingUtil.warn("Player @" + pd.discordId + " in row " + (pd.row+1) + " has invalid role " + pd.role);
                 validByDiscord.put(discord, false);
                 continue;
             }
