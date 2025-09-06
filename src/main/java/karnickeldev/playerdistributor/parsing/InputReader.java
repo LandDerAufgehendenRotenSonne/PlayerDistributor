@@ -61,7 +61,7 @@ public class InputReader {
             }
 
             if(hasWhitespace(discordId)) {
-                LoggingUtil.warn("Suspicious DiscordId " + discordId + " in row " + (y+1));
+                LoggingUtil.info("Suspicious DiscordId " + discordId + " in row " + (y+1));
             }
 
             if(discordVisited.containsKey(discordId.toLowerCase())) {
@@ -90,7 +90,7 @@ public class InputReader {
             }
 
             if(hasWhitespace(name) && !name.equals(InputValidator.MISSING_MC_NAME)) {
-                LoggingUtil.warn("Suspicious MinecraftName " + name + " in row " + (y+1));
+                LoggingUtil.info("Suspicious MinecraftName " + name + " in row " + (y+1));
             }
 
             // check twitch
@@ -174,7 +174,7 @@ public class InputReader {
 
     private static boolean hasWhitespace(String s) {
         if(s == null || s.isEmpty()) return false;
-        for(char c: s.toCharArray()) {
+        for(char c: s.trim().toCharArray()) {
             if(Character.isWhitespace(c)) return true;
         }
         return false;
