@@ -65,7 +65,7 @@ public class InputReader {
             }
 
             if(discordVisited.containsKey(discordId.toLowerCase())) {
-                LoggingUtil.warn("skipping double entry \"" + discordId + "\" found in rows " + (y+1) + ", " + (discordVisited.get(discordId)+1));
+                LoggingUtil.warn("skipping double entry \"" + discordId + "\" found in rows " + (y+1) + ", " + (discordVisited.get(discordId.toLowerCase())+1));
                 if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
                     rowsToDelete.add(y);
                 }
@@ -141,7 +141,15 @@ public class InputReader {
             for(int x = friend_col; x <= friend_col + max_friends; x++) {
                 String friend = excelInput.readCell(sheet, y, x);
                 if(friend != null && !friend.isEmpty()) {
-                    friends.add(friend);
+                    if(friend.contains(",")) {
+                        String[] friendList = friend.split(",");
+                        for(String fl: friendList) {
+                            String fn = fl.trim();
+                            friends.add(fn);
+                        }
+                    } else {
+                        friends.add(friend);
+                    }
                 }
             }
 
