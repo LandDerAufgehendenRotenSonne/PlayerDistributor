@@ -6,7 +6,9 @@ import karnickeldev.playerdistributor.excel.ExcelFileUtil;
 import karnickeldev.playerdistributor.excel.ExcelHelper;
 import karnickeldev.playerdistributor.parsing.InputReader;
 import karnickeldev.playerdistributor.parsing.InputValidator;
+import karnickeldev.playerdistributor.parsing.Limiter;
 import karnickeldev.playerdistributor.util.LoggingUtil;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,8 @@ public class PlayerDistributor {
     public static final String OUTPUT_NAME = "output";
 
     public static final String UNASSIGNED_ROLE = "OTHER";
+
+    public static final String ACCEPTED = "ACCEPTED";
 
     public static boolean CHECK_MINECRAFT_NAMES = false;
     public static boolean REMOVE_UNCHECKED_ENTRIES = false;
@@ -161,23 +165,40 @@ public class PlayerDistributor {
         LoggingUtil.info("Validated " + validPlayerList.size() + " players");
 
         if(REMOVE_UNCHECKED_ENTRIES) {
-            LoggingUtil.info("Deleted rows with players that didn't pass the background check or were double entries");
-            LoggingUtil.info("Run again without the --delUnchecked Flag to distribute players");
+
+            // delete rejected players
+            Sheet sheet = outputExcel.getSheet(configManager.getSheetName());
+            int offset = 0;
+            for(int y = configManager.getStartRow(); y <= configManager.getEndRow(); y++) {
+                String include = outputExcel.readCell(sheet, y - offset, configManager.getIncludeCol());
+                if(include == null || (!include.equalsIgnoreCase(ACCEPTED) && !InputReader.parseBool(include))) {
+                    outputExcel.removeRow(sheet, y - offset);
+                    offset++;
+                }
+            }
+
             try {
                 outputExcel.save();
                 outputExcel.close();
 
+                LoggingUtil.info("Deleted rows with players that didn't pass the background check, " +
+                        "were double entries, or simply lost the slot lottery");
+                LoggingUtil.info("Run again without the --delUnchecked Flag to distribute players");
                 LoggingUtil.close();
             } catch (IOException e) {
+                LoggingUtil.error("Error deleting unchecked players");
                 throw new RuntimeException(e);
             }
             System.exit(0);
             return;
         }
 
+        // slot lottery, randomly select players until config#playerlimit
+        List<PlayerData> acceptedPlayerList = Limiter.limitPlayerCount(configManager.getPlayerLimit(), validPlayerList);
+
         // preassign factions
         // includes friends of preassigned players
-        List<PlayerData> playersWithoutFaction = FactionPreAssigner.filterAndPreAssignFactions(validPlayerList);
+        List<PlayerData> playersWithoutFaction = FactionPreAssigner.filterAndPreAssignFactions(acceptedPlayerList);
 
         // group players
         List<PlayerGroup> groups = GroupBuilder.buildGroups(playersWithoutFaction);
@@ -187,7 +208,7 @@ public class PlayerDistributor {
         System.out.println(groups);
 
         // distribute players
-        Distributor.DistributionResult distributionResult = Distributor.distribute(configManager, groups, validPlayerList);
+        Distributor.DistributionResult distributionResult = Distributor.distribute(configManager, groups, acceptedPlayerList);
         LoggingUtil.info(distributionResult.factions.toString());
 
         LoggingUtil.info("TOTAL WARNINGS: " + LoggingUtil.getWarnings());
@@ -207,6 +228,10 @@ public class PlayerDistributor {
             }
             if(player.role.equalsIgnoreCase(UNASSIGNED_ROLE)) {
                 outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getRoleCol(), player.role);
+            }
+
+            if(player.accepted) {
+                outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getIncludeCol(), ACCEPTED);
             }
         }
         try {

@@ -39,7 +39,7 @@ public class InputValidator {
             String discord = pd.discordId.toLowerCase();
 
             // validate username
-            if(pd.name != null && !pd.name.equals(MISSING_MC_NAME) && !checkUsername(pd.name)) {
+            if(pd.name != null && !checkUsername(pd.name)) {
                 LoggingUtil.warn("Player @" + pd.discordId + " in row " + (pd.row+1) + " has invalid minecraft username " + pd.name);
                 validByDiscord.put(discord, false);
                 continue;
@@ -87,6 +87,7 @@ public class InputValidator {
             validatedPlayerlist.add(pd.copy());
         }
 
+        LoggingUtil.info("");
         for(String blacklisted: blacklistHits.keySet()) {
             LoggingUtil.info("Attempts to befriend " + blacklisted + ": " + blacklistHits.get(blacklisted));
         }

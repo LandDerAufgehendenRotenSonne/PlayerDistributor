@@ -29,19 +29,36 @@ the group limit or enforcing mutual friendships only to ensure players are group
 friends properly.
 
 ## Config
-| **Property**      | **value**                                                         |
-|-------------------|-------------------------------------------------------------------|
-| sheet-name        | name of the excel sheet to be processed                           |
-| mc-name-col       | index of the column with the minecraft name                       |
-| role-col          | index of the column with the players role                         |
-| roles             | comma-separates list of possible roles                            |
-| faction-col       | index of the column with the players faction                      |
-| factions          | comma-separates list of possible factions                         |
-| friends-col       | index of the column where the friends list starts                 |
-| max-friends       | how many columns to check for friends to the right of friends-col |
-| friends-blacklist | Discord Ids that are blacklisted from being friends               |
-| start-row         | what row to start processing                                      |
-| end-row           | what row to stop processing                                       |
+| **Property**      | **value**                                                             |
+|-------------------|-----------------------------------------------------------------------|
+| sheet-name        | name of the excel sheet to be processed                               |
+| mc-name-col       | index of the column with the minecraft name                           |
+| role-col          | index of the column with the players role                             |
+| roles             | comma-separates list of possible roles                                |
+| faction-col       | index of the column with the players faction                          |
+| factions          | comma-separates list of possible factions                             |
+| include-col       | index of the column where players are (pre) accepted                  |
+| friends-col       | index of the column where the friends list starts                     |
+| max-friends       | how many columns to check for friends to the right of friends-col     |
+| friends-blacklist | Discord Ids that are blacklisted from being friends                   |
+| start-row         | what row to start processing                                          |
+| end-row           | what row to stop processing                                           |
+| player-limit      | how many players (on top of pre-accepted players) can enter the event |
+
+Accepted Parameters for the twitch/discord check columns (not case-sensitive):
+- true
+- checked
+- include
+- 1
+
+Accepted Parameters for the include column (not case-sensitive):
+- true
+- checked
+- include
+- 1
+
+(players accepted through the lottery get the "accepted" label. However, this label does NOT work 
+to pre-accept a player - to distinguish pre-accepted from lottery-accepted players)
 
 ## How to run the .jar
 Open a Terminal in the same Directory as the .jar File and enter: 

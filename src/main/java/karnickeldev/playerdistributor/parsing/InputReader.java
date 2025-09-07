@@ -78,7 +78,7 @@ public class InputReader {
             if(name == null) {
                 name = InputValidator.MISSING_MC_NAME;
             } else {
-                if(mcVisited.containsKey(name.toLowerCase())) {
+                if(!name.equals(InputValidator.MISSING_MC_NAME) && mcVisited.containsKey(name.toLowerCase())) {
                     LoggingUtil.warn("skipping double mc-name \"" + name + "\" found in rows " + (y+1) + ", " +
                             (mcVisited.get(name.toLowerCase())+1) + " of user @" + discordId);
                     if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
@@ -153,7 +153,13 @@ public class InputReader {
                 }
             }
 
-            playerList.add(new PlayerData(y, discordId, name, true, true, role, faction, friends));
+
+            // check include
+            String slot = excelInput.readCell(sheet, y, configManager.getIncludeCol());
+            boolean guaranteed_slot = parseBool(slot);
+            if(guaranteed_slot) LoggingUtil.info("User @" + name + " has a slot guarantee");
+
+            playerList.add(new PlayerData(y, discordId, name, true, true, role, faction, guaranteed_slot, friends));
 
             if(y % 10 == 0) {
                 LoggingUtil.printProgressBar("Parsing Input", (byte)20, (y-start) / (float) (end - start));
@@ -180,11 +186,11 @@ public class InputReader {
         return false;
     }
 
-    private static boolean parseBool(String bool) {
+    public static boolean parseBool(String bool) {
         if(bool == null || bool.isEmpty()) return false;
         return bool.equalsIgnoreCase("true")
                 || bool.equalsIgnoreCase("checked")
-                || bool.equals("1");
+                || bool.equals("1") || bool.equalsIgnoreCase("include");
     }
 
 }

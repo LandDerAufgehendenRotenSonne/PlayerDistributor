@@ -39,6 +39,8 @@ public class ConfigManager {
     private final String FRIENDS_BLACKLIST_PROP = "friends-blacklist";
     private final String START_ROW = "start-row";
     private final String END_ROW = "end-row";
+    private final String INCLUDE_COL = "include-col";
+    private final String PLAYER_LIMIT = "player-limit";
 
 
 
@@ -76,13 +78,15 @@ public class ConfigManager {
         properties.setProperty(DISCORD_CHECK_COL_PROP, "3");
         properties.setProperty(ROLE_COL_PROP, "4");
         properties.setProperty(FACTION_COL_PROP, "5");
-        properties.setProperty(FRIENDS_COL_PROP, "6");
+        properties.setProperty(INCLUDE_COL, "6");
+        properties.setProperty(FRIENDS_COL_PROP, "7");
         properties.setProperty(MAX_FRIENDS_PROP, "5");
         properties.setProperty(FACTIONS_PROP, "Jungle, Desert, Plains");
         properties.setProperty(ROLES_PROP, "PVP, Builder, Roleplay");
         properties.setProperty(FRIENDS_BLACKLIST_PROP, "");
         properties.setProperty(START_ROW, "1");
         properties.setProperty(END_ROW, "100");
+        properties.setProperty(PLAYER_LIMIT, "200");
 
         save();
     }
@@ -187,6 +191,22 @@ public class ConfigManager {
     public int getEndRow() {
         try {
             return Integer.parseInt(properties.getProperty(END_ROW));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int getIncludeCol() {
+        try {
+            return Integer.parseInt(properties.getProperty(INCLUDE_COL));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int getPlayerLimit() {
+        try {
+            return Integer.parseInt(properties.getProperty(PLAYER_LIMIT));
         } catch (Exception e) {
             return 0;
         }
