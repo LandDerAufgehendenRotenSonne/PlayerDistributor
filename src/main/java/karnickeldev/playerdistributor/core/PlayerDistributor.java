@@ -194,7 +194,7 @@ public class PlayerDistributor {
         }
 
         // slot lottery, randomly select players until config#playerlimit
-        List<PlayerData> acceptedPlayerList = Limiter.limitPlayerCount(configManager.getPlayerLimit(), validPlayerList);
+        List<PlayerData> acceptedPlayerList = Limiter.limitPlayerCount(configManager.getSeed(), configManager.getPlayerLimit(), validPlayerList);
 
         // preassign factions
         // includes friends of preassigned players

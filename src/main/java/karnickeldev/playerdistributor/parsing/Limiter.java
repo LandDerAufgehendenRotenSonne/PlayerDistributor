@@ -14,11 +14,14 @@ import java.util.Random;
  **/
 public class Limiter {
 
-    private static final Random rnd = new Random(System.nanoTime());
+    private static final Random rnd = new Random();
 
-    public static List<PlayerData> limitPlayerCount(int maxPlayers, List<PlayerData> players) {
+    public static List<PlayerData> limitPlayerCount(long seed, int maxPlayers, List<PlayerData> players) {
+        if(maxPlayers >= players.size()) return new ArrayList<>(players);
 
         LoggingUtil.info("Drawing random players");
+
+        rnd.setSeed(seed);
 
         // pre-include all players with slot guarantee
         List<PlayerData> guaranteed = players.stream().filter(p -> p.guaranteed_slot).toList();

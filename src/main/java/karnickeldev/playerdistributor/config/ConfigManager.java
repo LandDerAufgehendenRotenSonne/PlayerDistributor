@@ -41,6 +41,7 @@ public class ConfigManager {
     private final String END_ROW = "end-row";
     private final String INCLUDE_COL = "include-col";
     private final String PLAYER_LIMIT = "player-limit";
+    private final String SEED = "seed";
 
 
 
@@ -87,6 +88,7 @@ public class ConfigManager {
         properties.setProperty(START_ROW, "1");
         properties.setProperty(END_ROW, "100");
         properties.setProperty(PLAYER_LIMIT, "200");
+        properties.setProperty(SEED, "421337161");
 
         save();
     }
@@ -207,6 +209,14 @@ public class ConfigManager {
     public int getPlayerLimit() {
         try {
             return Integer.parseInt(properties.getProperty(PLAYER_LIMIT));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public long getSeed() {
+        try {
+            return Long.parseLong(properties.getProperty(SEED));
         } catch (Exception e) {
             return 0;
         }

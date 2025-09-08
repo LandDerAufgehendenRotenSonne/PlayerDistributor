@@ -29,21 +29,22 @@ the group limit or enforcing mutual friendships only to ensure players are group
 friends properly.
 
 ## Config
-| **Property**      | **value**                                                             |
-|-------------------|-----------------------------------------------------------------------|
-| sheet-name        | name of the excel sheet to be processed                               |
-| mc-name-col       | index of the column with the minecraft name                           |
-| role-col          | index of the column with the players role                             |
-| roles             | comma-separates list of possible roles                                |
-| faction-col       | index of the column with the players faction                          |
-| factions          | comma-separates list of possible factions                             |
-| include-col       | index of the column where players are (pre) accepted                  |
-| friends-col       | index of the column where the friends list starts                     |
-| max-friends       | how many columns to check for friends to the right of friends-col     |
-| friends-blacklist | Discord Ids that are blacklisted from being friends                   |
-| start-row         | what row to start processing                                          |
-| end-row           | what row to stop processing                                           |
-| player-limit      | how many players (on top of pre-accepted players) can enter the event |
+| **Property**      | **value**                                                                               |
+|-------------------|-----------------------------------------------------------------------------------------|
+| sheet-name        | name of the excel sheet to be processed                                                 |
+| mc-name-col       | index of the column with the minecraft name                                             |
+| role-col          | index of the column with the players role                                               |
+| roles             | comma-separates list of possible roles                                                  |
+| faction-col       | index of the column with the players faction                                            |
+| factions          | comma-separates list of possible factions                                               |
+| include-col       | index of the column where players are (pre) accepted                                    |
+| friends-col       | index of the column where the friends list starts                                       |
+| max-friends       | how many columns to check for friends to the right of friends-col                       |
+| friends-blacklist | Discord Ids that are blacklisted from being friends                                     |
+| start-row         | what row to start processing                                                            |
+| end-row           | what row to stop processing                                                             |
+| player-limit      | how many players (on top of pre-accepted players) can enter the event                   |
+| seed              | the seed of the slot lotteries random (same seed results in same players being accepted |
 
 Accepted Parameters for the twitch/discord check columns (not case-sensitive):
 - true
