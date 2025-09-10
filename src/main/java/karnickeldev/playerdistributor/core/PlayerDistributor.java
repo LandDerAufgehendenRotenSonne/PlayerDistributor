@@ -171,7 +171,7 @@ public class PlayerDistributor {
             int offset = 0;
             for(int y = configManager.getStartRow(); y <= configManager.getEndRow(); y++) {
                 String include = outputExcel.readCell(sheet, y - offset, configManager.getIncludeCol());
-                if(include == null || (!include.equalsIgnoreCase(ACCEPTED) && !InputReader.parseBool(include))) {
+                if(include == null || (!include.trim().equalsIgnoreCase(ACCEPTED) && !InputReader.parseBool(include.trim()))) {
                     outputExcel.removeRow(sheet, y - offset);
                     offset++;
                 }
@@ -230,7 +230,7 @@ public class PlayerDistributor {
                 outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getRoleCol(), player.role);
             }
 
-            if(player.accepted) {
+            if(player.accepted && !player.guaranteed_slot) {
                 outputExcel.writeCell(outputExcel.getSheet(sheet), player.row, configManager.getIncludeCol(), ACCEPTED);
             }
         }

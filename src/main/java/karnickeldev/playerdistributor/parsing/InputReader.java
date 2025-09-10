@@ -75,7 +75,7 @@ public class InputReader {
 
             // check mc name
             String name = excelInput.readCell(sheet, y, name_col);
-            if(name == null) {
+            if(name == null || name.isEmpty()) {
                 name = InputValidator.MISSING_MC_NAME;
             } else {
                 if(!name.equals(InputValidator.MISSING_MC_NAME) && mcVisited.containsKey(name.toLowerCase())) {
@@ -110,6 +110,7 @@ public class InputReader {
             // maybe remove row
             // skip if players background is not properly checked
             if(!(discord && twitch)) {
+                LoggingUtil.info("found unchecked entry @" + discordId);
                 if(PlayerDistributor.REMOVE_UNCHECKED_ENTRIES) {
                     LoggingUtil.info("Deleted row " + (y+1) + " with player @" + discordId);
                     rowsToDelete.add(y);
@@ -156,8 +157,9 @@ public class InputReader {
 
             // check include
             String slot = excelInput.readCell(sheet, y, configManager.getIncludeCol());
-            boolean guaranteed_slot = parseBool(slot);
-            if(guaranteed_slot) LoggingUtil.info("User @" + name + " has a slot guarantee");
+            if(slot == null) slot = "";
+            boolean guaranteed_slot = parseBool(slot.trim());
+            if(guaranteed_slot) LoggingUtil.info("User @" + discordId + " has a slot guarantee");
 
             playerList.add(new PlayerData(y, discordId, name, true, true, role, faction, guaranteed_slot, friends));
 

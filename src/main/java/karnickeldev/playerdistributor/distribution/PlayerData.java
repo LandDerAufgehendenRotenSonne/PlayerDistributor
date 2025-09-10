@@ -40,4 +40,9 @@ public class PlayerData {
     public PlayerData copy() {
         return new PlayerData(row, discordId, name, twitchChecked, discordChecked, role, faction, guaranteed_slot, new ArrayList<>(friends));
     }
+
+    @Override
+    public String toString() {
+        return "(name=" + name + ",id=" + discordId + ",slot=" + guaranteed_slot +  ",accept=" + accepted + ")";
+    }
 }

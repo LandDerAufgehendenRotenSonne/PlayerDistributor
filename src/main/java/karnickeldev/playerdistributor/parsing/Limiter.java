@@ -17,7 +17,12 @@ public class Limiter {
     private static final Random rnd = new Random();
 
     public static List<PlayerData> limitPlayerCount(long seed, int maxPlayers, List<PlayerData> players) {
-        if(maxPlayers >= players.size()) return new ArrayList<>(players);
+        if(maxPlayers >= players.size()) {
+            for(PlayerData pd: players) {
+                if(!pd.guaranteed_slot) pd.accepted = true;
+            }
+            return new ArrayList<>(players);
+        }
 
         LoggingUtil.info("Drawing random players");
 
