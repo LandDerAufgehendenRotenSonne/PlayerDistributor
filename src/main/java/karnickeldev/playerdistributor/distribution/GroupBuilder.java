@@ -80,6 +80,7 @@ public class GroupBuilder {
         Map<String, Integer> idx = new HashMap<>(playerData.size());
         for(int i = 0; i < playerData.size(); i++) {
             idx.put(playerData.get(i).name.toLowerCase(), i);
+            idx.put(playerData.get(i).discordId.toLowerCase(), i);
         }
 
         DSU dsu = new DSU(playerData.size());
@@ -95,7 +96,7 @@ public class GroupBuilder {
                 // Decide whether to union based on mode
                 if(PlayerDistributor.LINK_MODE == LinkMode.MUTUAL) {
                     PlayerData b = playerData.get(j);
-                    if(contains(b.friends, a.name) || contains(b.friends, a.discordId)) {  // mutual check
+                    if(contains(b.friends, a.name.toLowerCase()) || contains(b.friends, a.discordId.toLowerCase())) {  // mutual check
                         dsu.union(i, j);
                     }
                 } else {
