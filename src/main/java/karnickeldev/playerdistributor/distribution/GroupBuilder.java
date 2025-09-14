@@ -90,7 +90,10 @@ public class GroupBuilder {
             PlayerData a = playerData.get(i);
             for(String friendName : a.friends) {
                 Integer j = idx.get(friendName.toLowerCase());
-                if(j == null) continue;    // ignore unknown names
+                if(j == null) {
+                    LoggingUtil.warn("Unknown name " + friendName);
+                    continue;    // ignore unknown names
+                }
                 if(j == i) continue;       // ignore self
 
                 // Decide whether to union based on mode

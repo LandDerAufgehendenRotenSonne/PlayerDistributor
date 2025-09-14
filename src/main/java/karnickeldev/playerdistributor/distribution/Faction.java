@@ -30,7 +30,9 @@ public class Faction {
     public void addGroup(PlayerGroup group) {
         if(!groups.contains(group)) {
             groups.add(group);
-            for(PlayerData player: group.getMembers()) addPlayer(player);
+            for(PlayerData player: group.getMembers()) {
+                if(player.faction.isEmpty()) addPlayer(player);
+            }
         }
     }
 

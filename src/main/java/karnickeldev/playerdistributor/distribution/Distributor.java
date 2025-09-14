@@ -45,13 +45,26 @@ public class Distributor {
 
         // distribute unfactioned players
         for (PlayerGroup group : groups) {
+            Faction targetFaction = chooseBestFaction(factions, group);
+
             if (!groupHasNoFaction(group.getMembers())) {
-                throw new IllegalStateException("Groups should not contain members with a Faction");
+                LoggingUtil.info("Group with members with a Faction");
+                Optional<PlayerData> faction = group.getMembers().stream().filter(p -> !p.faction.isEmpty()).findFirst();
+                if(faction.isPresent()) {
+                    LoggingUtil.info("Adding to existing group on faction " + faction.get().faction + " from @" + faction.get().discordId);
+                    for(PlayerData t: group.getMembers()) {
+                        if(t.name.equals("DUMMY")) System.out.println("HIIII");
+                    }
+                    targetFaction = factionByName.get(faction.get().faction);
+                }
             }
 
-            Faction targetFaction = chooseBestFaction(factions, group);
             targetFaction.addGroup(group);
-            finalPlayerList.addAll(group.getMembers());
+            for(PlayerData p: group.getMembers()) {
+                if(!finalPlayerList.contains(p)) {
+                    finalPlayerList.add(p);
+                }
+            }
         }
 
         return new DistributionResult(factions, finalPlayerList);

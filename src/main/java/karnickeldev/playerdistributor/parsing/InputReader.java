@@ -161,7 +161,12 @@ public class InputReader {
             boolean guaranteed_slot = parseBool(slot.trim());
             if(guaranteed_slot) LoggingUtil.info("User @" + discordId + " has a slot guarantee");
 
-            playerList.add(new PlayerData(y, discordId, name, true, true, role, faction, guaranteed_slot, friends));
+            boolean accepted = slot.trim().equalsIgnoreCase(PlayerDistributor.ACCEPTED);
+
+            PlayerData addPlayerData = new PlayerData(y, discordId, name, true, true, role, faction, guaranteed_slot, friends);
+            addPlayerData.accepted = accepted;
+
+            playerList.add(addPlayerData);
 
             if(y % 10 == 0) {
                 LoggingUtil.printProgressBar("Parsing Input", (byte)20, (y-start) / (float) (end - start));

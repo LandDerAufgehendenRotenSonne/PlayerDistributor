@@ -31,16 +31,16 @@ public class FactionPreAssigner {
 
         for(PlayerData pd: playerList) {
             if(!pd.faction.isEmpty()) {
-                filtered.remove(pd);
+                //filtered.remove(pd);
 
-                for(String f: pd.friends) {
-                    PlayerData friend = byName.get(f.toLowerCase());
-                    if(friend == null) continue;
-                    if(friend.faction.isEmpty()) {
-                        friend.faction = pd.faction;
-                        filtered.remove(friend);
-                    }
-                }
+//                for(String f: pd.friends) {
+//                    PlayerData friend = byName.get(f.toLowerCase());
+//                    if(friend == null) continue;
+//                    if(friend.faction.isEmpty()) {
+//                        friend.faction = pd.faction;
+//                        filtered.remove(friend);
+//                    }
+//                }
             }
 
         }

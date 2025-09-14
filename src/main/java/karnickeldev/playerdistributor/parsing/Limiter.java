@@ -29,7 +29,7 @@ public class Limiter {
         rnd.setSeed(seed);
 
         // pre-include all players with slot guarantee
-        List<PlayerData> guaranteed = players.stream().filter(p -> p.guaranteed_slot).toList();
+        List<PlayerData> guaranteed = new ArrayList<>(players.stream().filter(p -> p.guaranteed_slot || p.accepted).toList());
 
         List<PlayerData> winners = new ArrayList<>(guaranteed);
 

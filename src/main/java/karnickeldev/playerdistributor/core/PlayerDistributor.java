@@ -197,11 +197,10 @@ public class PlayerDistributor {
         List<PlayerData> acceptedPlayerList = Limiter.limitPlayerCount(configManager.getSeed(), configManager.getPlayerLimit(), validPlayerList);
 
         // preassign factions
-        // includes friends of preassigned players
         List<PlayerData> playersWithoutFaction = FactionPreAssigner.filterAndPreAssignFactions(acceptedPlayerList);
 
         // group players
-        List<PlayerGroup> groups = GroupBuilder.buildGroups(playersWithoutFaction);
+        List<PlayerGroup> groups = GroupBuilder.buildGroups(acceptedPlayerList);
         if(groups.isEmpty()) LoggingUtil.info("No groups found");
         LoggingUtil.info("Found " + groups.size() + " groups (largest: " + (groups.isEmpty() ? 0 : groups.get(0).size()) + ")");
 
